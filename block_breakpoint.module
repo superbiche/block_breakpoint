@@ -9,6 +9,17 @@
 use Drupal\Core\Form\FormStateInterface;
 
 /**
+ * Implements hook_theme().
+ */
+function block_breakpoint_theme($existing, $type, $theme, $path) {
+  return [
+    'block_breakpoint_inline_match' => [
+      'variables' => [],
+    ],
+  ];
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function block_breakpoint_form_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {

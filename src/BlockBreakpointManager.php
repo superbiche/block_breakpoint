@@ -261,6 +261,13 @@ class BlockBreakpointManager {
         $group = $block->getThirdPartySetting('block_breakpoint', 'breakpoint_group');
         $breakpoints = $block->getThirdPartySetting('block_breakpoint', 'breakpoints');
         $variables['attributes']['data-block-breakpoint-media-query'] = $this->buildMediaQueryFromBreakpoints($breakpoints, $group);
+        // Add inline script to remove blocks while they are processed in the
+        // browser.
+        $variables['content'] = [$variables['content']];
+        $variables['content'][] = [
+          '#theme' => 'block_breakpoint_inline_match',
+          '#weight' => -50,
+        ];
       }
     }
   }
@@ -279,6 +286,13 @@ class BlockBreakpointManager {
       $group = $component['#block_breakpoint']['breakpoint_group'];
       $breakpoints = $component['#block_breakpoint']['breakpoints'];
       $component['#attributes']['data-block-breakpoint-media-query'] = $this->buildMediaQueryFromBreakpoints($breakpoints, $group);
+      // Add inline script to remove blocks while they are processed in the
+      // browser.
+      $component['content'] = [$component['content']];
+      $component['content'][] = [
+        '#theme' => 'block_breakpoint_inline_match',
+        '#weight' => -50,
+      ];
     }
   }
 

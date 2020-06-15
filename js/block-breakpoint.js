@@ -1,25 +1,83 @@
 /**
  * @file
- * Adds a mutation observer, that observes block_breakpoint blocks and hides
- * them conditionally, if the selected breakpoint does not match the current
- * user's browser.
+ * Adds a mutation observer, DOMContentLoaded and utility functions to observe
+ * block_breakpoint blocks and hides them conditionally, if the selected
+ * breakpoint does not match the current user's browser.
  */
 
+/**
+ * Get the closest parent for a given element.
+ *
+ * @param element
+ *   The given DomElement
+ * @param selector
+ *   The selector the parent must match for.
+ * @returns {null|*}
+ *   The first matching DomElement.
+ */
+var blockBreakpointGetClosestParent = function (element, selector) {
+  // Element.matches() polyfill
+  if (!Element.prototype.matches) {
+    Element.prototype.matches =
+      Element.prototype.matchesSelector ||
+      Element.prototype.mozMatchesSelector ||
+      Element.prototype.msMatchesSelector ||
+      Element.prototype.oMatchesSelector ||
+      Element.prototype.webkitMatchesSelector ||
+      function (s) {
+        var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+          i = matches.length;
+        while (--i >= 0 && matches.item(i) !== this) {
+        }
+        return i > -1;
+      };
+  }
+
+  // Get the closest matching element
+  for (; element && element !== document; element = element.parentNode) {
+    if (element.matches(selector)) {
+      return element;
+    }
+  }
+  return null;
+};
+
+/**
+ * Matches the block breakpoint element with the given media query.
+ *
+ * @param element
+ *   The given element
+ */
+var blockBreakpointMatchElement = function(element) {
+  if (!element.classList.contains('layout-builder-block')) {
+    var match_media_query;
+    if (match_media_query = element.getAttribute('data-block-breakpoint-media-query')) {
+      // Check if the given media query is matched. Otherwise remove the block
+      // before it is getting further processed in the DOM.
+      if (!window.matchMedia(match_media_query).matches) {
+        element.remove();
+      }
+    }
+  }
+}
+
+/**
+ * React the initial DOM.
+ */
+document.addEventListener('DOMContentLoaded', function() {
+  document.body.querySelectorAll('.block-breakpoint').forEach(function (block) {
+    blockBreakpointMatchElement(block);
+  });
+});
+
+/**
+ * React on DOM changes using the MutationObserver.
+ */
 if (window.MutationObserver) {
   new MutationObserver(function () {
     // Observe the creation of blocks with block_breakpoint feature anbled.
     document.body.querySelectorAll('.block-breakpoint').forEach(function (block) {
-      // Blocks in the layout builder configuration page should not get removed.
-      if (!block.classList.contains('layout-builder-block')) {
-        var match_media_query;
-        if (match_media_query = block.getAttribute('data-block-breakpoint-media-query')) {
-          // Check if the given media query is matched. Otherwise remove the block
-          // before it is getting further processed in the DOM.
-          if (!window.matchMedia(match_media_query).matches) {
-            block.remove();
-          }
-        }
-      }
+      blockBreakpointMatchElement(block);
     });
   }).observe(document.documentElement, {childList: true, subtree: false});
 }
