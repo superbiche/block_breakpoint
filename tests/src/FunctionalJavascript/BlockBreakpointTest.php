@@ -2,11 +2,7 @@
 
 namespace Drupal\Tests\block_breakpoint\FunctionalJavascript;
 
-use Drupal\Core\Entity\Entity\EntityFormDisplay;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
-use Drupal\node\Entity\NodeType;
 use Drupal\Tests\field_group\Functional\FieldGroupTestTrait;
 
 /**
