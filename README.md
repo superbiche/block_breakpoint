@@ -40,6 +40,17 @@ which this module is based on. You can use the patch of of
 [this issue](http://drupal.org/node/3015152). This will make the module work with
 Layout Builder components.
 
+## Manual usage
+You can also use the feature completely independent from the Block UI. Simply attach the block_breakpoint
+library and wrap your conditional content with the block_breakpoint classes.
+
+```xml
+{{ attach_library('block_breakpoint/block_breakpoint') }}
+<div class="block-breakpoint" data-block-breakpoint-media-query="(max-width: 600px)">
+ <p>My conditional content, that should only show on mobile.</p>
+</div>
+```
+
 ## Requirements
 
 * Block, Breakpoint ([Drupal core](https://drupal.org/project/drupal))
