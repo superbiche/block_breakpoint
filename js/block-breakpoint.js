@@ -65,9 +65,10 @@ var blockBreakpointMatchElement = function(element) {
  * React the initial DOM.
  */
 document.addEventListener('DOMContentLoaded', function() {
-  document.body.querySelectorAll('.block-breakpoint').forEach(function (block) {
-    blockBreakpointMatchElement(block);
-  });
+  var blocks = document.body.querySelectorAll('.block-breakpoint');
+  for (var i = 0; i < blocks.length; i++) {
+    blockBreakpointMatchElement(blocks[i]);
+  }
 });
 
 /**
@@ -76,8 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
 if (window.MutationObserver) {
   new MutationObserver(function () {
     // Observe the creation of blocks with block_breakpoint feature anbled.
-    document.body.querySelectorAll('.block-breakpoint').forEach(function (block) {
-      blockBreakpointMatchElement(block);
-    });
+    var blocks = document.body.querySelectorAll('.block-breakpoint');
+    for (var i = 0; i < blocks.length; i++) {
+      blockBreakpointMatchElement(blocks[i]);
+    }
   }).observe(document.documentElement, {childList: true, subtree: false});
 }
