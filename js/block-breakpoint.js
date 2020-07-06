@@ -19,18 +19,18 @@ var blockBreakpointGetClosestParent = function (element, selector) {
   // Element.matches() polyfill
   if (!Element.prototype.matches) {
     Element.prototype.matches =
-      Element.prototype.matchesSelector ||
-      Element.prototype.mozMatchesSelector ||
-      Element.prototype.msMatchesSelector ||
-      Element.prototype.oMatchesSelector ||
-      Element.prototype.webkitMatchesSelector ||
-      function (s) {
-        var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-          i = matches.length;
-        while (--i >= 0 && matches.item(i) !== this) {
-        }
-        return i > -1;
-      };
+        Element.prototype.matchesSelector ||
+        Element.prototype.mozMatchesSelector ||
+        Element.prototype.msMatchesSelector ||
+        Element.prototype.oMatchesSelector ||
+        Element.prototype.webkitMatchesSelector ||
+        function (s) {
+          var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+              i = matches.length;
+          while (--i >= 0 && matches.item(i) !== this) {
+          }
+          return i > -1;
+        };
   }
 
   // Get the closest matching element
@@ -55,7 +55,9 @@ var blockBreakpointMatchElement = function(element) {
       // Check if the given media query is matched. Otherwise remove the block
       // before it is getting further processed in the DOM.
       if (!window.matchMedia(match_media_query).matches) {
-        element.remove();
+        // Internet Explorer 11 does not support removing HtmlElement,
+        // therefore using the old fashion way.
+        element.parentNode.removeChild(element);
       }
     }
   }
