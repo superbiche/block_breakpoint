@@ -19,18 +19,18 @@ var blockBreakpointGetClosestParent = function (element, selector) {
   // Element.matches() polyfill
   if (!Element.prototype.matches) {
     Element.prototype.matches =
-        Element.prototype.matchesSelector ||
-        Element.prototype.mozMatchesSelector ||
-        Element.prototype.msMatchesSelector ||
-        Element.prototype.oMatchesSelector ||
-        Element.prototype.webkitMatchesSelector ||
-        function (s) {
-          var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-              i = matches.length;
-          while (--i >= 0 && matches.item(i) !== this) {
-          }
-          return i > -1;
-        };
+      Element.prototype.matchesSelector ||
+      Element.prototype.mozMatchesSelector ||
+      Element.prototype.msMatchesSelector ||
+      Element.prototype.oMatchesSelector ||
+      Element.prototype.webkitMatchesSelector ||
+      function (s) {
+        var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+          i = matches.length;
+        while (--i >= 0 && matches.item(i) !== this) {
+        }
+        return i > -1;
+      };
   }
 
   // Get the closest matching element
@@ -50,15 +50,35 @@ var blockBreakpointGetClosestParent = function (element, selector) {
  */
 var blockBreakpointMatchElement = function(element) {
   if (!element.classList.contains('layout-builder-block')) {
-    var match_media_query;
-    if (match_media_query = element.getAttribute('data-block-breakpoint-media-query')) {
+    var match_media_query = element.getAttribute('data-block-breakpoint-media-query');
+    if (match_media_query) {
       // Check if the given media query is matched. Otherwise remove the block
       // before it is getting further processed in the DOM.
-      if (!window.matchMedia(match_media_query).matches) {
+      if (window.matchMedia(match_media_query).matches && element.getAttribute('data-block-breakpoint-hidden')) {
+        element.setAttribute('data-block-breakpoint-hidden', 0)
+        element.removeAttribute('data-block-breakpoint-prev-display')
+        element.style.display = element.getAttribute('data-block-breakpoint-prev-display')
+      } else {
         // Internet Explorer 11 does not support removing HtmlElement,
         // therefore using the old fashion way.
-        element.parentNode.removeChild(element);
+        element.setAttribute('data-block-breakpoint-hidden', 1)
+        element.setAttribute('data-block-breakpoint-prev-display', element.style.display)
+        element.style.display = 'none'
       }
+    }
+  }
+}
+
+function throttle(callback, limit) {
+  var waiting = false
+  return function() {
+    if (!waiting) {
+      // eslint-disable-next-line
+      callback.apply(this, arguments)
+      waiting = true
+      setTimeout(function() {
+        waiting = false
+      }, limit)
     }
   }
 }
@@ -85,3 +105,10 @@ if (window.MutationObserver) {
     }
   }).observe(document.documentElement, {childList: true, subtree: false});
 }
+
+window.addEventListener('resize', throttle(() => {
+  var blocks = document.body.querySelectorAll('.block-breakpoint');
+  for (var i = 0; i < blocks.length; i++) {
+    blockBreakpointMatchElement(blocks[i]);
+  }
+}, 50))

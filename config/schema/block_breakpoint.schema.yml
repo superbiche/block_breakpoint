@@ -18,3 +18,6 @@ block.block.*.third_party.block_breakpoint:
           breakpoint_id:
             type: string
             label: 'Breakpoint ID'
+    hide:
+      type: boolean
+      label: 'Hide the element instead of removing it'

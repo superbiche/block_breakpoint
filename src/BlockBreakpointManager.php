@@ -147,6 +147,14 @@ class BlockBreakpointManager {
         ],
       ],
     ];
+
+    // Add enabled checkbox.
+    $form['block_breakpoint']['hide'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Do not remove block'),
+      '#description' => t('Hide the block with CSS display:none instead of removing it from the DOM.'),
+      '#default_value' => $object->getThirdPartySetting('block_breakpoint', 'hide'),
+    ];
   }
 
   /**
@@ -227,6 +235,7 @@ class BlockBreakpointManager {
       $object->unsetThirdPartySetting('block_breakpoint', 'enabled');
       $object->unsetThirdPartySetting('block_breakpoint', 'breakpoint_group');
       $object->unsetThirdPartySetting('block_breakpoint', 'breakpoint');
+      $object->unsetThirdPartySetting('block_breakpoint', 'hide');
     }
     else {
       $object->setThirdPartySetting('block_breakpoint', 'enabled', TRUE);
@@ -239,6 +248,7 @@ class BlockBreakpointManager {
         $breakpoints[] = ['breakpoint_id' => $breakpoint_id];
       }
       $object->setThirdPartySetting('block_breakpoint', 'breakpoints', $breakpoints);
+      $object->setThirdPartySetting('block_breakpoint', 'enabled', $values['hide']);
     }
   }
 
@@ -261,6 +271,7 @@ class BlockBreakpointManager {
         $group = $block->getThirdPartySetting('block_breakpoint', 'breakpoint_group');
         $breakpoints = $block->getThirdPartySetting('block_breakpoint', 'breakpoints');
         $variables['attributes']['data-block-breakpoint-media-query'] = $this->buildMediaQueryFromBreakpoints($breakpoints, $group);
+        $variables['attributes']['data-block-breakpoint-hide'] = $block->getThirdPartySetting('block_breakpoint', 'hide');
         // Add inline script to remove blocks while they are processed in the
         // browser.
         $variables['content'] = [$variables['content']];
@@ -286,6 +297,8 @@ class BlockBreakpointManager {
       $group = $component['#block_breakpoint']['breakpoint_group'];
       $breakpoints = $component['#block_breakpoint']['breakpoints'];
       $component['#attributes']['data-block-breakpoint-media-query'] = $this->buildMediaQueryFromBreakpoints($breakpoints, $group);
+      // In Layout Builder, we don't remove the component to avoid potential issues.
+      $component['#attributes']['data-block-breakpoint-hide'] = TRUE;
       // Add inline script to remove blocks while they are processed in the
       // browser.
       $component['content'] = [$component['content']];
