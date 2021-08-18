@@ -83,32 +83,34 @@ function throttle(callback, limit) {
   }
 }
 
-/**
- * React the initial DOM.
- */
-document.addEventListener('DOMContentLoaded', function() {
+function checkBlockBreakpoints() {
   var blocks = document.body.querySelectorAll('.block-breakpoint');
   for (var i = 0; i < blocks.length; i++) {
     blockBreakpointMatchElement(blocks[i]);
   }
-});
+}
 
 /**
  * React on DOM changes using the MutationObserver.
  */
 if (window.MutationObserver) {
+  // Observe the creation of blocks with block_breakpoint feature anbled.
   new MutationObserver(function () {
-    // Observe the creation of blocks with block_breakpoint feature anbled.
-    var blocks = document.body.querySelectorAll('.block-breakpoint');
-    for (var i = 0; i < blocks.length; i++) {
-      blockBreakpointMatchElement(blocks[i]);
-    }
+    checkBlockBreakpoints()
   }).observe(document.documentElement, {childList: true, subtree: false});
 }
 
+/**
+ * React the initial DOM.
+ */
+document.addEventListener('DOMContentLoaded', function() {
+  checkBlockBreakpoints()
+});
+
 window.addEventListener('resize', throttle(() => {
-  var blocks = document.body.querySelectorAll('.block-breakpoint');
-  for (var i = 0; i < blocks.length; i++) {
-    blockBreakpointMatchElement(blocks[i]);
-  }
+  checkBlockBreakpoints()
+}, 50))
+
+window.addEventListener('orientationchange', throttle(() => {
+  checkBlockBreakpoints()
 }, 50))

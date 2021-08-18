@@ -248,7 +248,7 @@ class BlockBreakpointManager {
         $breakpoints[] = ['breakpoint_id' => $breakpoint_id];
       }
       $object->setThirdPartySetting('block_breakpoint', 'breakpoints', $breakpoints);
-      $object->setThirdPartySetting('block_breakpoint', 'enabled', $values['hide']);
+      $object->setThirdPartySetting('block_breakpoint', 'hide', $values['hide']);
     }
   }
 
