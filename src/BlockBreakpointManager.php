@@ -43,6 +43,8 @@ class BlockBreakpointManager {
    */
   protected $breakpointManager;
 
+  static $hasAddedScripts = false;
+
   /**
    * Constructs a new BlockBreakpointManager object.
    *
@@ -274,7 +276,9 @@ class BlockBreakpointManager {
         $variables['attributes']['data-block-breakpoint-hide'] = $block->getThirdPartySetting('block_breakpoint', 'hide');
         // Add inline script to remove blocks while they are processed in the
         // browser.
+        // FIXME this breaks the branding block. Try it.
         $variables['content'] = [$variables['content']];
+        // TODO only add first time.
         $variables['content'][] = [
           '#theme' => 'block_breakpoint_inline_match',
           '#weight' => -50,
@@ -302,6 +306,7 @@ class BlockBreakpointManager {
       // Add inline script to remove blocks while they are processed in the
       // browser.
       $component['content'] = [$component['content']];
+      // TODO only add first time.
       $component['content'][] = [
         '#theme' => 'block_breakpoint_inline_match',
         '#weight' => -50,

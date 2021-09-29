@@ -51,7 +51,7 @@ function block_breakpoint_form_layout_builder_configure_block_alter(&$form, Form
  */
 function block_breakpoint_preprocess_layout(&$variables) {
   $layout = $variables['layout'] ?? NULL;
-  if ($regions = $layout->getRegionNames()) {
+  if (is_object($layout) && is_callable('getRegionNames', $layout) && $regions = $layout->getRegionNames()) {
     foreach ($regions as $region_name) {
       if (isset($variables['content'][$region_name])) {
         _block_breakpoint_layout_builder_add($variables, $region_name);
